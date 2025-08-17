@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz: Línea de Tiempo IA</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 2rem; line-height: 1.5; }
+    h1 { margin-bottom: 0.25rem; }
+    .q { margin: 1rem 0; padding: 1rem; border: 1px solid #ddd; border-radius: 12px; }
+    button { padding: .6rem 1rem; border-radius: 10px; border: 1px solid #ddd; cursor: pointer; }
+    #resumen { margin-top: 1.5rem; font-weight: 600; }
+    .ok { color: #0a7f2e; }
+    .bad { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>Quiz: Línea de Tiempo de la IA</h1>
+  <p>Selecciona la respuesta correcta para cada pregunta y luego presiona <b>Evaluar</b>.</p>
+  
+        <div class="q">
+          <p><b>1)</b> ¿En qué evento se acuñó formalmente el término 'Inteligencia Artificial'?</p>
+          <label><input type="radio" name="q1" value="0"> Test de Turing (1950)</label><br/><label><input type="radio" name="q1" value="1"> Conferencia de Dartmouth (1956)</label><br/><label><input type="radio" name="q1" value="2"> ELIZA (1966)</label>
+        </div>
+        <div class="q">
+          <p><b>2)</b> ¿Cuál fue el primer chatbot que demostró interacción lingüística básica?</p>
+          <label><input type="radio" name="q2" value="0"> ELIZA (1966)</label><br/><label><input type="radio" name="q2" value="1"> Watson (2011)</label><br/><label><input type="radio" name="q2" value="2"> Shakey (1972)</label>
+        </div>
+        <div class="q">
+          <p><b>3)</b> ¿Qué hito de 2012 impulsó la visión por computadora moderna?</p>
+          <label><input type="radio" name="q3" value="0"> Deep Blue vence a Kasparov</label><br/><label><input type="radio" name="q3" value="1"> AlexNet en ImageNet</label><br/><label><input type="radio" name="q3" value="2"> IBM Watson gana en Jeopardy!</label>
+        </div>
+        <div class="q">
+          <p><b>4)</b> ¿Qué iniciativa establece el primer marco legal integral para regular la IA en Europa?</p>
+          <label><input type="radio" name="q4" value="0"> Apple Intelligence (2024)</label><br/><label><input type="radio" name="q4" value="1"> EU AI Act (2024)</label><br/><label><input type="radio" name="q4" value="2"> AlphaMissense (2023)</label>
+        </div>
+        <div class="q">
+          <p><b>5)</b> ¿Cuál de los siguientes logros está asociado al procesamiento de lenguaje natural en TV?</p>
+          <label><input type="radio" name="q5" value="0"> Watson gana en Jeopardy! (2011)</label><br/><label><input type="radio" name="q5" value="1"> Shakey el Robot (1972)</label><br/><label><input type="radio" name="q5" value="2"> Deep Blue (1997)</label>
+        </div>
+  <button id="btn">Evaluar</button>
+  <div id="resumen"></div>
+  <script>
+    const correctas = {'q1': '1', 'q2': '0', 'q3': '1', 'q4': '1', 'q5': '0'};
+    document.getElementById('btn').addEventListener('click', () => {
+      let score = 0;
+      let total = Object.keys(correctas).length;
+      for (const k in correctas) {
+        const marcado = document.querySelector(`input[name="${k}"]:checked`);
+        if (marcado && marcado.value === correctas[k]) score++;
+      }
+      const txt = `Tu puntaje: ${score}/${total}`;
+      const div = document.getElementById('resumen');
+      div.textContent = txt;
+      div.className = (score === total) ? 'ok' : 'bad';
+    });
+  </script>
+</body>
+</html>
