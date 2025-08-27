@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Caso avanzado – Geometría aplicada: tanques, dique y cercado</title>
+<style>
+  :root{
+    --bg:#0b1220; --card:#101a2f; --ink:#eaf0ff; --muted:#9fb0cc;
+    --line:#1e2b4a; --accent:#7bdc8c; --accent2:#89a8ff; --warn:#ffc76b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;
+       background:var(--bg); color:var(--ink); line-height:1.55}
+  .wrap{max-width:1200px; margin:auto; padding:28px 18px}
+  h1{font-size:clamp(1.5rem,2.2vw,2.1rem); margin:.2rem 0 .6rem}
+  .lead{color:var(--muted)}
+  section.card{background:linear-gradient(180deg,#111a30 0,#0c1427 100%);
+    border:1px solid var(--line); border-radius:14px; padding:18px; margin-bottom:22px}
+  h2{font-size:1.15rem; margin:.2rem 0 .8rem}
+  .pill{display:inline-block; padding:2px 8px; border-radius:999px;
+    border:1px solid #2a3b63; color:#c7d6ff; font-size:.78rem; margin-right:6px}
+  .muted{color:var(--muted)}
+  .qcard{border:1px dashed #2a3b63; border-radius:12px; padding:14px; margin:12px 0}
+  .opts{display:grid; gap:8px; margin-top:.4rem}
+  .opt{padding:10px 12px; border:1px solid #243250; border-radius:10px; background:#0e1628}
+  .opt b{color:var(--accent2)}
+  details{border:1px solid #243250; background:#0d1424; border-radius:12px; padding:12px 14px; margin-top:10px}
+  details summary{cursor:pointer; font-weight:700; color:var(--accent)}
+  code,.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace; background:#0b1323;
+    padding:1px 6px; border-radius:6px; border:1px solid #1f2b49}
+  .answer{color:#1ee0a1; font-weight:800}
+  /* Diagrama grande y nítido */
+  .svgbox{display:flex; align-items:center; justify-content:center;
+    background:#0d1527; border:1px solid #223056; border-radius:12px; padding:16px}
+  .svgbox svg{width:100%; max-width:1100px; height:auto; display:block}
+  .warn{color:var(--warn); font-weight:700}
+  footer{margin-top:20px; color:var(--muted); font-size:.9rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Caso avanzado – Geometría aplicada: tanques múltiples, dique de contención y cercado</h1>
+    <p class="lead">
+      En un patio de almacenamiento se disponen <strong>dos tanques cilíndricos verticales</strong> y un
+      <strong>dique perimetral rectangular</strong> con despeje uniforme. La normativa exige contener el
+      <strong>110% del volumen del tanque mayor</strong> más <strong>5&nbsp;cm de lluvia</strong> sobre todo el piso.
+      Además, se instalará una <strong>cerca de tres vueltas</strong> a 5 m del dique.
+      Se evalúan áreas y perímetros con <em>offset</em>, volúmenes cilíndricos y conversiones cúbicas.
+    </p>
+  </header>
+
+  <!-- DATOS -->
+  <section class="card" id="datos">
+    <h2>Datos del emplazamiento</h2>
+    <ul>
+      <li>Tanque A: cilindro con <span class="mono">r₁ = 8 m</span> y <span class="mono">h = 12 m</span>.</li>
+      <li>Tanque B: cilindro con <span class="mono">r₂ = 7 m</span> y <span class="mono">h = 12 m</span>.</li>
+      <li>Centros alineados E–O, separados <span class="mono">50 m</span>.</li>
+      <li>Dique rectangular: despeje interior uniforme <span class="mono">d = 3 m</span> desde cualquier tanque a muro.</li>
+      <li>Cuarto de bombas interior (sólido, estanco): base <span class="mono">4 × 3 m</span> (desplaza volumen).</li>
+      <li>Evento de lluvia: <span class="mono">0.05 m</span> sobre todo el piso del dique.</li>
+      <li>Llenado: 4 motobombas de <span class="mono">5 m³/min</span> (caudal total inicial <span class="mono">20 m³/min</span>).</li>
+      <li>Cerca perimetral: 3 vueltas, separada <span class="mono">5 m</span> por fuera del dique; rollos de <span class="mono">25 m</span>.</li>
+    </ul>
+    <p class="muted">Suposiciones: muros sin espesor (geométricamente), coronación horizontal, cuarto de bombas rígido.
+      Las cotas del dique garantizan el despeje <em>d</em> en todo el contorno (ver esquema).</p>
+  </section>
+
+  <!-- ESQUEMA (PLANTA) CORREGIDO -->
+  <section class="card" id="esquema">
+    <h2>Esquema (planta)</h2>
+    <div class="svgbox">
+      <!-- Escala aprox: 1 m ≈ 6 px. Dique 71×22 m (426×132 px). -->
+      <!-- Centros ajustados para respetar despeje d=3 m: -->
+      <!-- x_centro_izq = x_izq_dique + (d + r1)·escala = 120 + (3+8)*6 = 186 px -->
+      <!-- x_centro_der = x_izq_dique + ancho_dique − (d + r2)·escala = 120 + 426 − (3+7)*6 = 486 px -->
+      <svg viewBox="0 0 680 260" aria-label="Dos tanques, dique y cerca exterior">
+        <rect x="0" y="0" width="680" height="260" fill="#0b1323"></rect>
+        <!-- Dique interior (71 x 22 m) -->
+        <rect x="120" y="64" width="426" height="132" fill="none" stroke="#89a8ff" stroke-width="3"/>
+        <!-- Cerca exterior: +5 m por lado → 81 x 32 m (486×192 px) -->
+        <rect x="90" y="34" width="486" height="192" fill="none" stroke="#7bdc8c" stroke-width="2" stroke-dasharray="8 6"/>
+        <!-- Tanques (r1=8m → 48 px; r2=7m → 42 px), centrados y con despeje correcto -->
+        <circle cx="186" cy="130" r="48" fill="#1b2b4e" stroke="#7bdc8c" stroke-width="2"/>
+        <circle cx="486" cy="130" r="42" fill="#1b2b4e" stroke="#7bdc8c" stroke-width="2"/>
+        <!-- Etiquetas -->
+        <text x="186" y="118" fill="#7bdc8c" font-size="14" text-anchor="middle">A (r=8 m)</text>
+        <text x="486" y="118" fill="#7bdc8c" font-size="14" text-anchor="middle">B (r=7 m)</text>
+        <text x="333" y="56" fill="#89a8ff" font-size="14" text-anchor="middle">Dique 71×22 m (despeje 3 m)</text>
+        <text x="333" y="26" fill="#7bdc8c" font-size="14" text-anchor="middle">Cerca a 5 m del dique (3 vueltas)</text>
+      </svg>
+    </div>
+    <p class="muted" style="margin-top:8px">
+      El dique abarca ambos tanques con <strong>despeje uniforme de 3 m</strong>. La cerca se traza a 5 m del contorno del dique.
+      Ningún tanque intersecta el muro: el centro de cada cilindro queda a distancia <span class="mono">d + r</span> del muro más cercano.
+    </p>
+  </section>
+
+  <section class="card" id="preguntas">
+    <h2>Preguntas (selección múltiple, única respuesta)</h2>
+
+    <!-- P1 -->
+    <div class="qcard">
+      <p><strong>P1.</strong> Determine la <em>altura mínima</em> del muro del dique para contener el
+        <strong>110% del volumen del tanque mayor</strong> más <strong>0.05 m</strong> de lluvia sobre todo el piso,
+        considerando el desplazamiento del cuarto de bombas de <code>4×3 m</code>.
+        <br><em>Redondee al milímetro (0.001&nbsp;m).</em></p>
+      <div class="opts">
+        <div class="opt"><b>A.</b> 1.712 m</div>
+        <div class="opt"><b>B.</b> 1.749 m</div>
+        <div class="opt"><b>C.</b> 1.763 m</div>
+        <div class="opt"><b>D.</b> 1.600 m</div>
+      </div>
+      <details><summary>Ver solución P1</summary>
+        <p><span class="answer">Correcta: C (≈ 1.763 m).</span></p>
+        <ol>
+          <li><strong>Área de piso del dique</strong> (sin descontar equipo):<br>
+              Dimensión E–O = <code>r₁ + separación + r₂ + 2d = 8 + 50 + 7 + 6 = 71 m</code>.<br>
+              Dimensión N–S = <code>2·max(r) + 2d = 2·8 + 6 = 22 m</code>.<br>
+              <code>A_floor = 71 × 22 = 1&nbsp;562 m²</code>.
+          </li>
+          <li><strong>Requisito de contención</strong>:<br>
+              Tanque mayor A → <code>V_A = π·r₁²·h = π·(8)²·12 = 768π ≈ 2&nbsp;412.743 m³</code>.<br>
+              <code>V_req = 1.1·V_A + (0.05 m)·A_floor ≈ 1.1·2&nbsp;412.743 + 0.05·1&nbsp;562</code><br>
+              <code>V_req ≈ 2&nbsp;654.017 + 78.100 = 2&nbsp;732.117 m³</code>.
+          </li>
+          <li><strong>Volumen geométrico disponible</strong> hasta altura <code>H</code>:<br>
+              El cuarto de bombas desplaza volumen <code>A_bombas·H</code>, con <code>A_bombas = 4×3 = 12 m²</code>.<br>
+              <code>V_geom(H) = (A_floor − A_bombas)·H = (1&nbsp;562 − 12)·H = 1&nbsp;550·H</code>.
+          </li>
+          <li><strong>Altura mínima</strong>: <code>V_geom(H) = V_req</code> ⇒
+              <code>H = 2&nbsp;732.117 / 1&nbsp;550 ≈ 1.763 m</code>.</li>
+        </ol>
+	<p class="muted">
+  		Nota técnica: usamos <code>A_piso</code> (no el área efectiva) para la lluvia porque el enunciado indica
+		“sobre todo el piso del dique”; el área ocupada por el cuarto no recibe lluvia. Ese volumen de lluvia
+  		(en <code>m³</code>) sí debe ser contenido por el volumen útil del dique, que depende de <code>A_efectiva</code>.
+ 	 	Por eso aparece en el numerador <code>V_req</code> y en el denominador <code>A_efectiva</code>.
+	</p>
+
+        <p class="muted">
+          Errores comunes: (i) ignorar la lluvia; (ii) no descontar el área del cuarto de bombas; (iii) usar el
+          tanque menor en lugar del mayor para el 110%.
+        </p>
+      </details>
+    </div>
+
+    <!-- P2 -->
+    <div class="qcard">
+      <p><strong>P2.</strong> ¿Cuántos <em>rollos</em> de alambre de 25 m se requieren para la cerca de
+        <strong>3 vueltas</strong> a <strong>5 m</strong> por fuera del dique?</p>
+      <div class="opts">
+        <div class="opt"><b>A.</b> 27</div>
+        <div class="opt"><b>B.</b> 28</div>
+        <div class="opt"><b>C.</b> 30</div>
+        <div class="opt"><b>D.</b> 34</div>
+      </div>
+      <details><summary>Ver solución P2</summary>
+        <p><span class="answer">Correcta: B (28 rollos).</span></p>
+        <ol>
+          <li>Dimensiones de la cerca (offset rectangular): <code>(71 + 2·5) × (22 + 2·5) = 81 × 32 m</code>.</li>
+          <li>Perímetro de una vuelta: <code>P = 2(L + W) = 2(81 + 32) = 226 m</code>.</li>
+          <li>Longitud total para 3 vueltas: <code>3P = 678 m</code>.</li>
+          <li>Rollos: <code>678 / 25 = 27.12</code> ⇒ se requieren <strong>28</strong> (siempre redondeo hacia arriba).</li>
+        </ol>
+        <p class="muted">Trampa habitual: responder 27 por aproximación aritmética; en conteos de unidades discretas se usa
+          <em>techo</em> (entero superior).</p>
+      </details>
+    </div>
+
+    <!-- P3 -->
+    <div class="qcard">
+      <p><strong>P3.</strong> Con 4 bombas de <code>5 m³/min</code> cada una, ¿cuál es el
+        <em>tiempo</em> para llenar <strong>ambos tanques</strong> al <strong>95%</strong>?</p>
+      <div class="opts">
+        <div class="opt"><b>A.</b> 202.35 min</div>
+        <div class="opt"><b>B.</b> 189.00 min</div>
+        <div class="opt"><b>C.</b> 204.00 min</div>
+        <div class="opt"><b>D.</b> 225.00 min</div>
+      </div>
+      <details><summary>Ver solución P3</summary>
+        <p><span class="answer">Correcta: A (202.35 min).</span></p>
+        <ol>
+          <li>Volúmenes: <code>V_A = 768π ≈ 2&nbsp;412.743 m³</code>, <code>V_B = 588π ≈ 1&nbsp;847.258 m³</code>.</li>
+          <li>Suma: <code>V_T = (V_A + V_B)·0.95 = (1&nbsp;356π)·0.95 ≈ 4&nbsp;046.9997 m³</code>.</li>
+          <li>Caudal total: <code>Q = 4 · 5 = 20 m³/min</code>.</li>
+          <li>Tiempo: <code>t = V_T / Q ≈ 4&nbsp;046.9997 / 20 = 202.35 min</code> (≈ 3.37 h).</li>
+        </ol>
+        <p class="muted">Verifica que el porcentaje se aplique al volumen total (no por tanque por separado, lo cual daría el mismo
+          resultado pero aumenta riesgo de redondeo diferente).</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- RESUMEN PROCEDIMIENTO -->
+  <section class="card" id="resumen">
+    <h2>Resumen de procedimiento (paso a paso, claro)</h2>
+    <ol>
+      <li><strong>Planta del dique:</strong> usar el rectángulo mínimo que contiene ambos círculos con
+          despeje <code>d</code> en todo el contorno:
+          <ul>
+            <li>E–O: <code>r₁ + separación + r₂ + 2d</code>.</li>
+            <li>N–S: <code>2·max(r₁, r₂) + 2d</code>.</li>
+            <li><code>A_floor = (E–O) · (N–S)</code>.</li>
+          </ul>
+      </li>
+      <li><strong>Altura de contención:</strong> calcular <code>V_req = 1.1·V_mayor + (lluvia)·A_floor</code>.
+          El volumen disponible a altura <code>H</code> es
+          <code>V_geom(H) = (A_floor − A_desplazado) · H</code>, con
+          <code>A_desplazado = área del cuarto de bombas</code>. Igualar y despejar <code>H</code>.</li>
+      <li><strong>Cerca exterior:</strong> sumar <code>2·(distancia)</code> a cada dimensión del rectángulo del dique,
+          hallar el perímetro <code>P = 2(L+W)</code>, multiplicar por el número de vueltas y dividir por la longitud del rollo.
+          En unidades discretas (rollos), usar <strong>entero superior</strong>.</li>
+      <li><strong>Llenado:</strong> volumen cilíndrico <code>V = πr²h</code>; sumar tanques y aplicar porcentaje requerido.
+          Tiempo <code>t = V_total / Q_total</code> con <code>Q_total</code> suma de caudales.</li>
+      <li><strong>Unidades cúbicas:</strong> recuerda <code>1 L = 0.001 m³</code> y
+          <code>m³/h ↔ m³/min</code> (divide o multiplica por 60) para evitar errores de orden de magnitud.</li>
+    </ol>
+    <p class="muted"><span class="warn">Cuidado:</span> no confundir radio con diámetro; no olvides el despeje en <em>ambas</em> dimensiones;
+      y evita redondear hacia abajo cuando el conteo es de elementos enteros (rollos).</p>
+  </section>
+
+  <footer>
+    <strong>Presentado por:</strong> Juan Pablo Montero Ospina
+  </footer>
+</div>
+</body>
+</html>
