@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tanque Mezclador – Evaluación Conceptual</title>
+<style>
+  :root{
+    --bg:#0f172a;        /* slate-900 */
+    --card:#111827;      /* gray-900 */
+    --muted:#94a3b8;     /* slate-400 */
+    --text:#e5e7eb;      /* gray-200 */
+    --accent:#22c55e;    /* green-500 */
+    --accent-2:#ef4444;  /* red-500   */
+    --accent-3:#3b82f6;  /* blue-500  */
+    --border:#1f2937;    /* gray-800 */
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    background: radial-gradient(1200px 800px at 20% -10%, #1e293b 0%, var(--bg) 60%);
+    color:var(--text);
+    line-height:1.6;
+  }
+  .wrap{max-width:980px;margin:48px auto;padding:0 20px;}
+  header{
+    background:linear-gradient(135deg,#111827 0%,#0b1222 60%);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:28px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);
+  }
+  h1{margin:0 0 8px;font-size:28px;letter-spacing:.2px}
+  .subtitle{color:var(--muted);margin:0}
+  .card{
+    background:linear-gradient(180deg,#0f1527, #0b1222 70%);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:22px;
+    margin-top:22px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  .muted{color:var(--muted)}
+  .eq{background:#0b1222;border:1px solid var(--border);padding:12px;border-radius:12px;color:#cbd5e1;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;overflow:auto}
+  .q-title{font-weight:700;margin-bottom:8px}
+  .choices{display:grid;gap:10px;margin:12px 0}
+  .choice{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+    display:flex; gap:10px; align-items:flex-start;
+    background:rgba(255,255,255,.02);
+    cursor:pointer;
+    transition:transform .08s ease, border-color .2s ease, background .2s ease;
+  }
+  .choice:hover{transform:translateY(-1px); background:rgba(255,255,255,.04)}
+  .choice input{margin-top:3px}
+  .feedback{
+    margin-top:8px; font-weight:600;
+    display:none;
+  }
+  .ok{color:var(--accent)}
+  .bad{color:var(--accent-2)}
+  .pill{
+    display:inline-block; padding:4px 10px; border-radius:999px;
+    border:1px solid var(--border); color:var(--muted); font-size:12px
+  }
+  .btn{
+    margin-top:22px;
+    background:linear-gradient(135deg, #155e75, #1d4ed8);
+    color:white; font-weight:700; border:none; border-radius:12px;
+    padding:12px 16px; cursor:pointer;
+    box-shadow:0 8px 20px rgba(59,130,246,.35);
+    transition:transform .06s ease, opacity .2s ease, background .2s ease;
+  }
+  .btn[disabled]{opacity:.45; cursor:not-allowed; box-shadow:none}
+  .btn:hover:not([disabled]){transform:translateY(-1px)}
+  details.explain{
+    margin-top:26px;
+    border:1px dashed var(--border);
+    border-radius:16px;
+    padding:16px 18px;
+    background:rgba(255,255,255,.02)
+  }
+  details[open] summary{margin-bottom:8px}
+  summary{
+    cursor:pointer; font-weight:700; color:#c7d2fe; /* indigo-200 */
+    outline:none;
+  }
+  footer{
+    margin-top:34px;
+    color:var(--muted);
+    font-size:14px
+  }
+  a{color:#93c5fd}
+  .hr{height:1px; background:var(--border); margin:18px 0}
+  .tag{font-size:12px; color:#a1a1aa}
+  .kbd{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b1222;border:1px solid var(--border);padding:2px 6px;border-radius:6px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>🌊 Tanque mezclador – evaluación conceptual</h1>
+      <p class="subtitle">Responde las preguntas. Recibirás retroalimentación inmediata. Al terminar, podrás abrir la explicación completa.</p>
+    </header>
+
+    <section class="card">
+      <div class="pill">Contexto</div>
+      <p>
+        Un tanque perfectamente mezclado comienza con <strong>agua pura</strong>. Desde <span class="kbd">t = 0</span> entra agua salada con concentración constante <em>C<sub>in</sub></em> y sale a la misma tasa de flujo, por lo que el <strong>volumen se mantiene constante</strong>.
+      </p>
+      <div class="eq">
+        Modelo (cantidad de sal Q(t)):<br/>
+        dQ/dt = r<sub>in</sub>·C<sub>in</sub> − (r<sub>out</sub>/V)·Q
+      </div>
+      <p class="muted">Piensa en “tasa que entra” vs “tasa que sale”. El tanque es un filtro que responde con retardo.</p>
+    </section>
+
+    <!-- PREGUNTA 1 -->
+    <section class="card" id="q1">
+      <div class="q-title">Pregunta 1. ¿Por qué la concentración interna tiende a C<sub>in</sub> a largo plazo?</div>
+      <div class="choices" role="group" aria-labelledby="q1">
+        <label class="choice"><input type="radio" name="q1" value="A"/> <span><strong>A)</strong> Porque en equilibrio la <em>entrada de sal por minuto</em> se iguala a la <em>sal que sale por minuto</em>.</span></label>
+        <label class="choice"><input type="radio" name="q1" value="B"/> <span><strong>B)</strong> Porque la concentración crece sin límite ya que la sal nunca se elimina completamente.</span></label>
+        <label class="choice"><input type="radio" name="q1" value="C"/> <span><strong>C)</strong> Porque la concentración interna siempre disminuye a cero al salir agua con sal.</span></label>
+        <label class="choice"><input type="radio" name="q1" value="D"/> <span><strong>D)</strong> Porque solo ocurre si la velocidad de entrada supera a la de salida.</span></label>
+      </div>
+      <div class="feedback" id="fb1"></div>
+      <div class="tag">Pista: “tasa de cambio cero” significa equilibrio dinámico, no ausencia de flujo.</div>
+    </section>
+
+    <!-- PREGUNTA 2 -->
+    <section class="card" id="q2">
+      <div class="q-title">Pregunta 2. Si la entrada tiene concentración variable C<sub>in</sub>(t) que <em>aumenta</em> con el tiempo, ¿qué ocurre con la concentración del tanque a largo plazo?</div>
+      <div class="choices" role="group" aria-labelledby="q2">
+        <label class="choice"><input type="radio" name="q2" value="A"/> <span><strong>A)</strong> Seguirá a la entrada con <em>rezago</em> (respuesta suavizada respecto a C<sub>in</sub>(t)).</span></label>
+        <label class="choice"><input type="radio" name="q2" value="B"/> <span><strong>B)</strong> Será exactamente igual a la entrada en todo instante.</span></label>
+        <label class="choice"><input type="radio" name="q2" value="C"/> <span><strong>C)</strong> Oscilará sin dirección definida, independientemente de C<sub>in</sub>(t).</span></label>
+        <label class="choice"><input type="radio" name="q2" value="D"/> <span><strong>D)</strong> No dependerá de la entrada debido a la mezcla perfecta.</span></label>
+      </div>
+      <div class="feedback" id="fb2"></div>
+      <div class="tag">Pista: el tanque actúa como “filtro de orden 1” con constante de tiempo.</div>
+    </section>
+
+    <section class="card" style="text-align:center">
+      <button id="revealBtn" class="btn" disabled>Ver explicación completa</button>
+      <div class="muted" style="margin-top:8px">Se habilitará cuando respondas ambas preguntas.</div>
+    </section>
+
+    <!-- EXPLICACIONES OCULTAS -->
+    <section id="explainBlock" style="display:none">
+      <details class="explain" open>
+        <summary>🧩 Razonamiento analítico para (P1)</summary>
+        <p>
+          El término <em>r<sub>in</sub>·C<sub>in</sub></em> es la entrada de sal por minuto; <em>(r<sub>out</sub>/V)·Q</em> es la salida por minuto, proporcional a lo que hay dentro. En equilibrio (<span class="kbd">dQ/dt = 0</span>), se cumple <strong>entrada = salida</strong>. Dado que el tanque está bien mezclado y el volumen es constante, la concentración que sale es igual a la concentración interna; por lo tanto, a largo plazo la concentración del tanque coincide con <strong>C<sub>in</sub></strong>.
+        </p>
+      </details>
+
+      <details class="explain">
+        <summary>🌱 Profundización conceptual</summary>
+        <ul>
+          <li><strong>Equilibrio dinámico</strong>: aunque la concentración final sea constante, el sistema intercambia masa continuamente.</li>
+          <li><strong>Constante de tiempo</strong>: controla el ritmo de acercamiento; varios “τ” para acercarse al valor final.</li>
+          <li><strong>Dependencia de estructura</strong>: si el volumen variara, la respuesta y el equilibrio cambiarían.</li>
+          <li><strong>Lavado</strong>: si C<sub>in</sub>=0, el mismo modelo describe purificación hacia 0.</li>
+        </ul>
+      </details>
+
+      <details class="explain" open>
+        <summary>⏱️ Razonamiento analitico para (P2: entrada variable)</summary>
+        <p>
+          Un tanque mezclador con volumen constante se comporta como un <strong>filtro de primer orden</strong>: su salida (concentración interna) sigue una versión <em>suavizada</em> de la entrada con <strong>retardo</strong>. Por ello, si C<sub>in</sub>(t) crece, la concentración del tanque crece también pero <em>rezagada</em> (no puede igualarla instantáneamente). De ahí que la opción correcta sea <strong>A</strong>.
+        </p>
+      </details>
+
+      <details class="explain">
+        <summary>🎤 Qué destaca? </summary>
+        <ol>
+          <li>Diferenciar <em>equilibrio dinámico</em> de “sistema detenido”.</li>
+          <li>El modelo expresa <em>competencia de tasas</em>: lo que entra vs lo que sale.</li>
+          <li>El tanque es un “filtro” que <em>suaviza</em> y <em>retrasa</em> cambios de entrada.</li>
+          <li>La conclusión clave (hacia C<sub>in</sub>) se obtiene por <em>análisis conceptual</em>, no por cálculo numérico.</li>
+        </ol>
+      </details>
+
+      <section class="card">
+        <h2 style="margin-top:0">📚 Bibliografía (IEEE)</h2>
+        <ol>
+          <li>W. E. Boyce and R. C. DiPrima, <em>Elementary Differential Equations and Boundary Value Problems</em>, 10th ed. Hoboken, NJ, USA: Wiley, 2017.</li>
+          <li>D. G. Zill and W. S. Wright, <em>Differential Equations with Boundary-Value Problems</em>, 9th ed. Boston, MA, USA: Cengage, 2014.</li>
+          <li>J. D. Logan, <em>Applied Mathematics</em>, 4th ed. Hoboken, NJ, USA: Wiley, 2013.</li>
+        </ol>
+      </section>
+    </section>
+
+    <footer>
+      <div class="hr"></div>
+      <p>© Tu práctica de cálculo aplicado. Tip: presiona <span class="kbd">R</span> para reiniciar respuestas.</p>
+    </footer>
+  </div>
+
+<script>
+(function(){
+  const correct = { q1: 'A', q2: 'A' };
+  const state = { q1: null, q2: null };
+
+  const fb1 = document.getElementById('fb1');
+  const fb2 = document.getElementById('fb2');
+  const revealBtn = document.getElementById('revealBtn');
+  const explain = document.getElementById('explainBlock');
+
+  function updateFeedback(q, val){
+    const ok = correct[q] === val;
+    const el = q === 'q1' ? fb1 : fb2;
+    el.style.display = 'block';
+    el.className = 'feedback ' + (ok ? 'ok' : 'bad');
+    el.textContent = ok ? '✅ ¡Correcto!' : '❌ Incorrecto. Intenta de nuevo.';
+  }
+
+  function checkAllAnswered(){
+    const all = Object.values(state).every(v => v !== null);
+    revealBtn.disabled = !all;
+  }
+
+  document.querySelectorAll('input[name="q1"]').forEach(r => {
+    r.addEventListener('change', e => {
+      state.q1 = e.target.value;
+      updateFeedback('q1', state.q1);
+      checkAllAnswered();
+    });
+  });
+  document.querySelectorAll('input[name="q2"]').forEach(r => {
+    r.addEventListener('change', e => {
+      state.q2 = e.target.value;
+      updateFeedback('q2', state.q2);
+      checkAllAnswered();
+    });
+  });
+
+  revealBtn.addEventListener('click', () => {
+    explain.style.display = 'block';
+    revealBtn.textContent = 'Explicación visible';
+    revealBtn.disabled = true;
+  });
+
+  // Tecla R para reiniciar
+  window.addEventListener('keydown', (e)=>{
+    if(e.key.toLowerCase()==='r'){
+      document.querySelectorAll('input[type="radio"]').forEach(i=>i.checked=false);
+      state.q1 = state.q2 = null;
+      [fb1, fb2].forEach(f=>{f.style.display='none'; f.textContent='';});
+      explain.style.display = 'none';
+      revealBtn.textContent = 'Ver explicación completa';
+      revealBtn.disabled = true;
+    }
+  });
+})();
+</script>
+</body>
+</html>
